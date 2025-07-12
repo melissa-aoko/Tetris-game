@@ -36,8 +36,8 @@ Watch the gameplay demo here:
 3. Clone this repository:
 
    ```bash
-   git clone https://github.com/melissa-aoko/tetris-game.git
-   cd tetris-game
+   git clone https://github.com/melissa-aoko/Tetris-game.git
+   cd Tetris-game
    ```
 
 ---
