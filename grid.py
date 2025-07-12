@@ -1,4 +1,5 @@
 import pygame
+from colors import Colors
 
 
 class Grid:
@@ -10,7 +11,7 @@ class Grid:
         #2d array to represet grids , list of lists
         self.grid =[[0 for j in range(self.num_cols)]for i in range(self.num_rows)]
 
-        self.colors = self.get_cell_colors()
+        self.colors = Colors.get_cell_colors()
 
     def print_grid(self):
         for row in range (self.num_rows):
@@ -18,22 +19,50 @@ class Grid:
                 print(self.grid[row][column], end=" ")
             print()
 
+    def is_inside(self, row, column):
+        if row>=0 and row<self.num_rows and column >=0 and column <self.num_cols:
+            return True
+        return False
+    
+    def is_empty(self, row, column):
+        if self.grid[row][column]==0:
+            return True
+        return False
+    
+    def is_row_full(self, row):
+        for column in range (self.num_cols):
+            if self.grid[row][column]==0:
+                return False
+        return True
+    
+    def clear_row(self, row):
+        for column in range (self.num_cols):
+            self.grid[row][column]=0
 
-    def get_cell_colors(self):
-        dark_grey   = (26, 31, 40)
-        cyan        = (163, 216, 244) 
-        yellow      = (255, 246, 165)  
-        purple      = (217, 184, 255)  
-        mint_green  = (182, 245, 216)  
-        coral_pink  = (255, 181, 181)  
-        peach       = (255, 209, 164)  
-        rose        = (255, 183, 227)  
+    def move_row_down(self, row, num_rows):
+        for column in range (self.num_cols):
+            self.grid[row+num_rows][column]=self.grid[row][column]
+            self.grid[row][column]
 
-        return [dark_grey,cyan, yellow, purple, mint_green, coral_pink, peach, rose]
+    def clear_full_rows(self):
+        completed=0
+        for row in range (self.num_rows-1,0, -1):
+            if self.is_row_full(row):
+                self.clear_row(row)
+                completed+=1
+
+            elif completed>0:
+                self.move_row_down(row, completed)
+        return completed
+    
+    def reset(self):
+        for row in range (self.num_rows):
+            for column in range (self.num_cols):
+                self.grid[row][column]=0
 
     def draw (self, screen):
         for row in range(self.num_rows):
             for column in range (self.num_cols):
                 cell_value = self.grid[row][column]
-                cell_rect= pygame.Rect(column*self.cell_size +1, row*self.cell_size+1, self.cell_size -1, self.cell_size-1)
+                cell_rect= pygame.Rect(column*self.cell_size +11, row*self.cell_size+11, self.cell_size -1, self.cell_size-1)
                 pygame.draw.rect(screen, self.colors[cell_value],cell_rect)
