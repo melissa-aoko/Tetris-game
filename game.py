@@ -1,6 +1,10 @@
 from grid import Grid
 from blocks import *
 import random
+import json
+from block import Block
+
+SAVE_FILE = "save.json"
 
 class Game:
     def __init__(self):
@@ -83,6 +87,41 @@ class Game:
             if self.grid.is_inside(tile.row, tile.column)==False:
                 return False
         return True
+    
+    
+    def save_game_state(self, username):
+        state = {
+            "score": self.score,
+            "grid": self.grid.grid,
+            "current_block": self.current_block.to_dict(),
+            "next_block": self.next_block.to_dict()
+        }
+        try:
+            with open(SAVE_FILE, "r") as f:
+                data = json.load(f)
+        except:
+            data = {}
+
+        data[username] = state
+
+        with open(SAVE_FILE, "w") as f:
+            json.dump(data, f)
+
+    def load_game_state(self, username):
+        try:
+            with open(SAVE_FILE, "r") as f:
+                data = json.load(f)
+
+            if username in data:
+                state = data[username]
+                self.score = state["score"]
+                self.grid.grid = state["grid"]
+                self.current_block = Block.from_dict(state["current_block"])
+                self.next_block = Block.from_dict(state["next_block"])
+                
+        except Exception as e:
+            print("Failed to load saved game:", e)
+
     
     def draw(self, screen):
         self.grid.draw(screen)

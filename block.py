@@ -10,7 +10,42 @@ class Block:
 		self.row_offset = 0
 		self.column_offset = 0
 		self.rotation_state = 0
+		self.position = Position(0, 4)
 		self.colors = Colors.get_cell_colors()
+
+	def to_dict(self):
+			return {
+				"id": self.id,
+				"rotation_state": self.rotation_state,
+				"position": [self.position.row, self.position.column],
+				
+			}
+
+	@classmethod
+	def from_dict(cls, data):
+			from blocks import LBlock, JBlock, IBlock, OBlock, SBlock, TBlock, ZBlock
+
+			block_map = {
+				1: LBlock,
+				2: JBlock,
+				3: IBlock,
+				4: OBlock,
+				5: SBlock,
+				6: TBlock,
+				7: ZBlock,
+			}
+			block_id = data.get("id")
+			block_class = block_map.get(block_id, Block)
+			block = block_class()
+
+			# Default to 0 if rotation_state key is missing
+			block.rotation_state = data.get("rotation_state", 0)
+
+			# Default to [0, 4] if position key is missing
+			pos = data.get("position", [0, 4])
+			block.position = Position(*pos)
+
+			return block
 
 	def move(self, rows, columns):
 		self.row_offset += rows
