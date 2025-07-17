@@ -32,6 +32,18 @@ def sign_up(username, password):
     save_users(users)
     return True, "Sign-up successful."
 
+def update_high_score(username, score):
+    users = load_users()
+    if username in users:
+        if score > users[username]["high_score"]:
+            users[username]["high_score"] = score
+            save_users(users)
+
+def get_high_score(username):
+    users = load_users()
+    return users.get(username, {}).get("high_score", 0)
+
+
 def log_in(username, password):
     users = load_users()
     if username not in users:
